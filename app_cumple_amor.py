@@ -9,14 +9,14 @@ from kivy.uix.boxlayout import BoxLayout
 from random import randint
 from kivy.graphics import Color, RoundedRectangle
 
-# 🔹 Simula tamaño de pantalla de celular
-Window.size = (360, 720)
+# 🔹 NO fuerces el tamaño en celular, usa el tamaño real
 Window.clearcolor = (1, 1, 1, 1)
 
 # --- Escalador adaptable a pantallas ---
 def escalar(valor):
     """Escala valores según el ancho de la ventana (referencia 360px)."""
-    return valor * (Window.width / 360.0)
+    base = min(Window.width, 360)
+    return valor * (base / 360.0)
 
 
 class Corazon(Image):
@@ -25,7 +25,7 @@ class Corazon(Image):
         self.source = 'corazon_brillante.png'
         self.size_hint = (None, None)
         self.size = (escalar(35), escalar(35))
-        self.x = randint(0, Window.width - 40)
+        self.x = randint(0, int(Window.width) - 40)
         self.y = randint(-100, 0)
         self.velocidad = randint(1, 3)
 
@@ -33,7 +33,7 @@ class Corazon(Image):
         self.y += self.velocidad
         if self.y > Window.height:
             self.y = randint(-100, 0)
-            self.x = randint(0, Window.width - 40)
+            self.x = randint(0, int(Window.width) - 40)
 
 
 class CumpleApp(App):
@@ -44,18 +44,18 @@ class CumpleApp(App):
         self.fondo = Image(source='fondo_cumple.jpg', allow_stretch=True, keep_ratio=False)
         self.root.add_widget(self.fondo)
 
-        # Imagen de ustedes (más pequeña)
+        # Imagen de ustedes
         self.foto = Image(
             source='foto_de_dos.jpg',
-            size_hint=(0.65, 0.3),  # 🔹 Más pequeña
+            size_hint=(0.65, 0.3),
             pos_hint={'center_x': 0.5, 'top': 0.88}
         )
         self.root.add_widget(self.foto)
 
-        # Texto del mensaje (más pequeño y centrado)
+        # Texto del mensaje
         self.mensaje = Label(
             text='',
-            font_size='16sp',  # 🔹 Antes 20sp
+            font_size='16sp',
             color=(1, 0, 0, 1),
             halign='center',
             valign='middle',
@@ -66,24 +66,26 @@ class CumpleApp(App):
         self.root.add_widget(self.mensaje)
 
         # --- BOTÓN MEJORADO ---
-        self.boton_layout = FloatLayout(size_hint=(0.38, 0.075), pos_hint={'center_x': 0.5, 'y': 0.05})
+        self.boton_layout = FloatLayout(
+            size_hint=(0.55, 0.09),
+            pos_hint={'center_x': 0.5, 'y': 0.05}
+        )
 
-        # Fondo redondeado rosado detrás del botón
+        # Fondo redondeado rosado
         with self.boton_layout.canvas.before:
             Color(1, 0.4, 0.6, 1)
-            self.boton_fondo = RoundedRectangle(radius=[25])
+            self.boton_fondo = RoundedRectangle(radius=[30])
         self.boton_layout.bind(pos=self.actualizar_fondo, size=self.actualizar_fondo)
 
         # Contenedor texto + icono
         self.contenido_boton = BoxLayout(
             orientation='horizontal',
-            spacing=3,
-            size_hint=(None, None),
-            size=(escalar(180), escalar(40)),
+            spacing=5,
+            size_hint=(0.85, 0.7),
             pos_hint={'center_x': 0.5, 'center_y': 0.5}
         )
 
-        # Texto blanco más pequeño
+        # Texto blanco
         self.boton_texto = Label(
             text='Ver tu sorpresa',
             font_size='14sp',
@@ -93,31 +95,29 @@ class CumpleApp(App):
         )
         self.boton_texto.bind(size=self.boton_texto.setter('text_size'))
 
-        # Icono regalo más pequeño y alineado
+        # Icono regalo MÁS GRANDE 🎁
         self.icono_regalo = Image(
             source='regalo.png',
             size_hint=(None, None),
-            size=(escalar(22), escalar(22)),
-            pos_hint={'center_y': 0.6}
+            size=(escalar(32), escalar(32)),  # 🔹 Más grande (antes 22)
+            pos_hint={'center_y': 0.5}
         )
 
-        # Orden: texto + regalo
         self.contenido_boton.add_widget(self.boton_texto)
         self.contenido_boton.add_widget(self.icono_regalo)
         self.boton_layout.add_widget(self.contenido_boton)
 
-        # Botón invisible encima
+        # Botón invisible
         self.boton = Button(
             background_normal='',
             background_color=(0, 0, 0, 0),
-            size_hint=(0.38, 0.075),
+            size_hint=(0.55, 0.09),
             pos_hint={'center_x': 0.5, 'y': 0.05}
         )
         self.boton.bind(on_press=self.mostrar_mensaje)
 
         self.root.add_widget(self.boton_layout)
         self.root.add_widget(self.boton)
-        # --- FIN BOTÓN ---
 
         # Corazones animados
         self.corazones = [Corazon() for _ in range(25)]
@@ -153,13 +153,12 @@ class CumpleApp(App):
             self.mensaje.text += self.texto_completo[self.index]
             self.index += 1
         else:
-            x = self.mensaje.pos_hint.get('center_x', 0.5)
-            y = self.mensaje.pos_hint.get('center_y', 0.4)
+            # 🔹 Corazón final MÁS GRANDE ❤️
             self.emoji_corazon = Image(
                 source='corazon_pequeno.png',
                 size_hint=(None, None),
-                size=(escalar(30), escalar(30)),
-                pos_hint={'center_x': x + 0.08, 'center_y': y - 0.09}
+                size=(escalar(60), escalar(60)),  # 🔹 Más grande (antes 45)
+                pos_hint={'center_x': 0.5, 'center_y': 0.19}
             )
             self.root.add_widget(self.emoji_corazon)
             return False
