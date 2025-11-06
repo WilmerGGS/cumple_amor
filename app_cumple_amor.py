@@ -8,15 +8,15 @@ from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from random import randint
 from kivy.graphics import Color, RoundedRectangle
+from kivy.metrics import dp
 
-# 🔹 NO fuerces el tamaño en celular, usa el tamaño real
+# 🔹 NO fuerces el tamaño en celular
 Window.clearcolor = (1, 1, 1, 1)
 
-# --- Escalador adaptable a pantallas ---
+# --- Escalador mejorado para Android ---
 def escalar(valor):
-    """Escala valores según el ancho de la ventana (referencia 360px)."""
-    base = min(Window.width, 360)
-    return valor * (base / 360.0)
+    """Escala valores usando dp (density-independent pixels) para Android."""
+    return dp(valor)
 
 
 class Corazon(Image):
@@ -67,7 +67,7 @@ class CumpleApp(App):
 
         # --- BOTÓN MEJORADO ---
         self.boton_layout = FloatLayout(
-            size_hint=(0.55, 0.09),
+            size_hint=(0.6, 0.09),  # 🔹 Un poco más ancho
             pos_hint={'center_x': 0.5, 'y': 0.05}
         )
 
@@ -80,26 +80,26 @@ class CumpleApp(App):
         # Contenedor texto + icono
         self.contenido_boton = BoxLayout(
             orientation='horizontal',
-            spacing=5,
-            size_hint=(0.85, 0.7),
+            spacing=dp(8),  # 🔹 Más espacio
+            size_hint=(0.9, 0.75),  # 🔹 Más grande dentro del botón
             pos_hint={'center_x': 0.5, 'center_y': 0.5}
         )
 
         # Texto blanco
         self.boton_texto = Label(
             text='Ver tu sorpresa',
-            font_size='14sp',
+            font_size='15sp',  # 🔹 Tamaño fijo en sp
             color=(1, 1, 1, 1),
             halign='center',
             valign='middle'
         )
         self.boton_texto.bind(size=self.boton_texto.setter('text_size'))
 
-        # Icono regalo MÁS GRANDE 🎁
+        # Icono regalo MUCHO MÁS GRANDE 🎁
         self.icono_regalo = Image(
             source='regalo.png',
             size_hint=(None, None),
-            size=(escalar(32), escalar(32)),  # 🔹 Más grande (antes 22)
+            size=(dp(40), dp(40)),  # 🔹 MUCHO más grande usando dp()
             pos_hint={'center_y': 0.5}
         )
 
@@ -111,7 +111,7 @@ class CumpleApp(App):
         self.boton = Button(
             background_normal='',
             background_color=(0, 0, 0, 0),
-            size_hint=(0.55, 0.09),
+            size_hint=(0.6, 0.09),  # 🔹 Mismo tamaño que el layout
             pos_hint={'center_x': 0.5, 'y': 0.05}
         )
         self.boton.bind(on_press=self.mostrar_mensaje)
@@ -128,9 +128,12 @@ class CumpleApp(App):
         # Texto romántico
         self.texto_completo = (
             "Feliz cumpleaños, mi catira hermosa.\n\n"
-            "Eres la persona que hace que cada día valga la pena. "
-            "Hoy celebro tu vida y todo lo hermoso que traes al mío. "
-            "Te amo más de lo que las palabras pueden expresar. "
+            "Te deseo lo mejor para tú vida mi amor, eres un gran ser humano soy muy afortunado de haberte conocido. "
+            "Un año mas de vida, de experiencias y vivencias, que se te cumplan todos los deseos de tu corazón mi amor. "
+            "No olvides que TE AMO Cumpleañera mia, Te Adoro con mi alma y siempre vas a estar en mi corazón."
+            "Este es el primero de muchos regalos que vas a recibir de todas las personas que te aman."
+            "Nunca olvides que eres muy importante para mi vida, y este regalo que lo hice con mucho cariño y amor es una prueba de ello."
+            "Te amo más de lo que las palabras pueden expresar PD: Tú novio, marido, esposo, TÚ TODO. "
         )
         self.index = 0
 
@@ -153,11 +156,11 @@ class CumpleApp(App):
             self.mensaje.text += self.texto_completo[self.index]
             self.index += 1
         else:
-            # 🔹 Corazón final MÁS GRANDE ❤️
+            # 🔹 Corazón final MUCHO MÁS GRANDE ❤️
             self.emoji_corazon = Image(
                 source='corazon_pequeno.png',
                 size_hint=(None, None),
-                size=(escalar(60), escalar(60)),  # 🔹 Más grande (antes 45)
+                size=(dp(80), dp(80)),  # 🔹 MUCHO más grande (antes 60)
                 pos_hint={'center_x': 0.5, 'center_y': 0.19}
             )
             self.root.add_widget(self.emoji_corazon)
